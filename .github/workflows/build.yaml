@@ -64,7 +64,7 @@ jobs:
         run: curl -s https://api.github.com/repos/lensapp/lens/releases/85222165 | jq -r 'select(.prerelease == false) | .body[0:]' > ${{ github.workspace }}-CHANGELOG.txt
       - name: Release
         uses: softprops/action-gh-release@v0.1.14
-        if: github.ref == 'refs/heads/master'
+        if: github.ref == 'refs/heads/main'
         with:
           tag_name: v${{ env.LENS_VERSION }}
           body_path: ${{ github.workspace }}-CHANGELOG.txt
