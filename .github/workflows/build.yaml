@@ -3,7 +3,7 @@ name: Build openLens
 on:
   workflow_dispatch:
   push:
-    branches: [ main ]
+    branches: [ feature ]
     paths-ignore:
       - '**/README.md'
   pull_request:
