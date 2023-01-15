@@ -1,0 +1,80 @@
+name: Build openLens
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - '**/README.md'
+  pull_request:
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 360
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3.2.0
+      - name: Export version to variable
+        run: |
+            export LENS_VERSION=$(cat version)
+            echo "LENS_VERSION=$LENS_VERSION" >> $GITHUB_ENV
+        shell: bash
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16.19.0
+      - name: Update Lens
+        run: |
+          git config --system core.longpaths true
+          git clone https://github.com/lensapp/lens.git
+          git branch -a
+          cp update.js lens/update.js
+          cd lens
+          git checkout v${{ env.LENS_VERSION }}
+          node update.js
+      - name: Build Lens
+        run: |
+          mkdir releasefiles
+          choco install visualstudio2019buildtools visualstudio2019-workload-vctools         
+          make build
+          cp dist/OpenLens*.exe releasefiles/OpenLens-${{ env.LENS_VERSION }}.exe
+          cp dist/OpenLens*.exe dist/OpenLens-${{ env.LENS_VERSION }}.exe
+        shell: bash
+        working-directory: lens
+
+      - name: Calculate SHA256 checksum
+        run: |
+            certutil -hashfile OpenLens-${{ env.LENS_VERSION }}.exe SHA256 | tee OpenLens-${{ env.LENS_VERSION }}.exe.sha256
+        shell: bash
+        working-directory: lens/dist
+
+      - uses: actions/upload-artifact@v3
+        if: github.ref != 'refs/heads/main'
+        with:
+          name: OpenLens-${{ matrix.os }}
+          retention-days: 5
+          path: |
+            lens/dist/OpenLens-${{ env.LENS_VERSION }}.exe
+            lens/dist/OpenLens-${{ env.LENS_VERSION }}*.sha256
+      - name: Generate Changelog
+        run: curl -s https://api.github.com/repos/lensapp/lens/releases/85222165 | jq -r 'select(.prerelease == false) | .body[0:]' > ${{ github.workspace }}-CHANGELOG.txt
+      - name: Release
+        uses: softprops/action-gh-release@v0.1.14
+        if: github.ref == 'refs/heads/master'
+        with:
+          tag_name: v${{ env.LENS_VERSION }}
+          body_path: ${{ github.workspace }}-CHANGELOG.txt
+          files: | 
+            lens/dist/OpenLens-${{ env.LENS_VERSION }}.exe
+            lens/dist/OpenLens-${{ env.LENS_VERSION }}*.sha256
+      - name: Latest
+        uses: softprops/action-gh-release@v0.1.14
+        if: github.ref == 'refs/heads/main'
+        with:
+          tag_name: Latest
+          files: | 
+           lens/dist/OpenLens.Setup.${{ env.LENS_VERSION }}.exe
+           lens/dist/lates*.yml
