@@ -12,7 +12,7 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [self-hosted]
+        os: [windows-latest]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 360
     steps:
@@ -22,6 +22,7 @@ jobs:
         run: |
             export LENS_VERSION=$(cat version)
             echo "LENS_VERSION=$LENS_VERSION" >> $GITHUB_ENV
+            shell: pwsh
         shell: bash
       - uses: actions/setup-node@v3
         with:
@@ -35,6 +36,7 @@ jobs:
           cd lens
           git checkout v${{ env.LENS_VERSION }}
           node update.js
+          shell: bash
       - name: Build Lens
         run: |
           mkdir releasefiles
