@@ -1,4 +1,4 @@
-name: Check lens https://api.github.com/repos/lensapp/lens/releases
+name: Check lens
 on:
   schedule:
     - cron: '0 0 * * 6'
