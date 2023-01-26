@@ -3,7 +3,7 @@ const fs = require('fs');
 var packagejson = require('./package.json');
 
 packagejson.build.publish = [{
-    url: "https://github.com/pmazumda2022/openlens/releases/download/v6.2.5",
+	url: "https://github.com/pmazumda2022/openlens/releases/download/Latest",
     provider: "generic"
 }];
 
