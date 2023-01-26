@@ -4,7 +4,7 @@ var packagejson = require('./package.json');
 
 packagejson.build.publish = [{
 	url: "https://github.com/pmazumda2022/openlens/releases/download/Latest",
-    provider: "generic"
+	provider: "generic"
 }];
 
 packagejson.build.win.artifactName = "OpenLens.Setup.${version}.${ext}";
