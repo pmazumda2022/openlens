@@ -1,0 +1,22 @@
+name: Check lens https://api.github.com/repos/lensapp/lens/releases
+on:
+  schedule:
+    - cron: '0 0 * * 6'
+  workflow_dispatch:
+
+jobs:
+  version_check:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3.0.2
+        with:
+          token: ${{ secrets.ptoken }}
+      - name: Get the latest lens version
+        run: |
+          curl -s https://api.github.com/repos/lensapp/lens/releases | jq -r '[.[] | select(.prerelease == false)][0] | .tag_name[1:]' > version
+          echo "LENS_VERSION=$(cat version)" >> $GITHUB_ENV
+      - name: Add & Commit
+        uses: EndBug/add-and-commit@v9.1.1
+        with:
+          message: 'Open Lens version : ${{ env.LENS_VERSION }}'
