@@ -11,7 +11,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3.0.2
         with:
-          token: ${{ secrets.ptoken }}
+          token: ${{ secrets.PTOKEN }}
       - name: Get the latest lens version
         run: |
           curl -s https://api.github.com/repos/lensapp/lens/releases | jq -r '[.[] | select(.prerelease == false)][0] | .tag_name[1:]' > version
