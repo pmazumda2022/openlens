@@ -18,7 +18,7 @@ packagejson.copyright = [
     '',
     'OpenLens Windows Binary builds @ pmazumda2022/openlens',
     'by Pinak Mazumdar'
-]
+].join("\r\n")
 
 
 
