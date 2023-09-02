@@ -23,23 +23,25 @@ jobs:
       - name: Checkout lens repo
         uses: actions/checkout@v3.2.0
       - name: Export version to variable
-        run: |
-            export LENS_VERSION=$(cat version)
-            echo "LENS_VERSION=$LENS_VERSION" >> $GITHUB_ENV
+        run:  echo "LENS_VERSION=$(cat version)" >> $GITHUB_ENV
         shell: bash
+        
+        
       - uses: actions/setup-node@v3
         with:
           node-version: 16.16.0
-      - name: Update Lens
-        run: |
-          git config --system core.longpaths true
-          git clone https://github.com/lensapp/lens.git
-          git branch -a
-          cp update.js lens/update.js
-          cd lens
-          git checkout v${{ env.LENS_VERSION }}
-          node update.js
-        shell: bash
+      
+      - name: Checkout Upstream Lens
+        uses: actions/checkout@v3
+        with:
+          repository: lensapp/lens
+          path: lens
+          ref: v${{ env.LENS_VERSION }}
+          fetch-depth: 1
+
+      - name: Patch Upstream Lens
+        run: node update.js
+      
       - name: Build Lens
         run: |
           mkdir releasefiles
