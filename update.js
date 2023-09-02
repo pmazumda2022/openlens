@@ -11,7 +11,7 @@ packagejson.build.win.artifactName = "OpenLens.Setup.${version}.${ext}";
 packagejson.version = `${packagejson.version}-${process.env.BUILD_ID}`;
 packagejson.build.detectUpdateChannel = false;
 
-delete packageJsonOpenLens.scripts.postinstall;
+delete packagejson.scripts.postinstall;
 
 packagejson.copyright = [
     packagejson.copyright,
