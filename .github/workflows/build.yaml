@@ -54,10 +54,10 @@ jobs:
         working-directory: lens
         
       - name: Calculate SHA256 checksum
-        run: |
+        run: |-
            if command -v shasum 2>/dev/null 1>&2; then
             for filename in OpenLens*; do shasum -a 256 "${filename}" | tee "${filename}.sha256" ; done
-          else
+           else
             for filename in OpenLens*; do certutil -hashfile "${filename}" SHA256 | tee "${filename}.sha256" ; done
            fi
         shell: bash
