@@ -55,7 +55,11 @@ jobs:
         
       - name: Calculate SHA256 checksum
         run: |
-            certutil -hashfile OpenLens-${{ env.LENS_VERSION }}.exe SHA256 | tee OpenLens-${{ env.LENS_VERSION }}.exe.sha256
+           if command -v shasum 2>/dev/null 1>&2; then
+            for filename in OpenLens*; do shasum -a 256 "${filename}" | tee "${filename}.sha256" ; done
+          else
+            for filename in OpenLens*; do certutil -hashfile "${filename}" SHA256 | tee "${filename}.sha256" ; done
+           fi
         shell: bash
         working-directory: lens/open-lens/dist
 
